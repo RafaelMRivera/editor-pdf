@@ -27,5 +27,11 @@ async function route() {
 window.addEventListener('hashchange', route);
 route();
 
-if ('serviceWorker' in navigator && import.meta.env.PROD) navigator.serviceWorker.register('./sw.js').catch(() => {});
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  // Si ya había una versión instalada y llega una nueva, recarga una sola vez para mostrarla
+  const had = !!navigator.serviceWorker.controller;
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !reloaded) { reloaded = true; location.reload(); } });
+  navigator.serviceWorker.register('./sw.js').then((r) => r.update()).catch(() => {});
+}
 if (navigator.storage?.persist) navigator.storage.persist().catch(() => {});

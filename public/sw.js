@@ -1,13 +1,29 @@
-const C = 'editor-pdf-v1';
+// Modo sin conexión. La página (HTML) se pide primero a internet para que siempre cargue la versión nueva;
+// si no hay conexión, se usa la copia guardada. Los archivos con hash (assets/) no cambian, van desde caché.
+const C = 'editor-pdf-v3';
 self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
+self.addEventListener('activate', (e) =>
+  e.waitUntil(
+    caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== C).map((k) => caches.delete(k)))).then(() => clients.claim())
+  )
+);
 self.addEventListener('fetch', (e) => {
-  if (e.request.method !== 'GET' || new URL(e.request.url).origin !== location.origin) return;
+  const req = e.request;
+  if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
+  const fresh = req.mode === 'navigate' || /\.(webmanifest|html)$/.test(req.url) || req.url.endsWith('/sw.js');
   e.respondWith(
     caches.open(C).then(async (c) => {
-      const hit = await c.match(e.request);
-      const net = fetch(e.request).then((r) => { if (r.ok) c.put(e.request, r.clone()); return r; }).catch(() => hit);
-      return hit || net;
+      const hit = await c.match(req);
+      if (fresh || !hit) {
+        try {
+          const r = await fetch(req, { cache: 'no-cache' });
+          if (r.ok) c.put(req, r.clone());
+          return r;
+        } catch {
+          return hit || (await c.match('./')) || Response.error();
+        }
+      }
+      return hit;
     })
   );
 });
