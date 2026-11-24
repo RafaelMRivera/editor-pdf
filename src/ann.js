@@ -166,3 +166,13 @@ export function xf(o, r, s, ox, oy, dx, dy) {
   }
   return a;
 }
+
+// Al cambiar el tamaño del papel: k = (alto/ancho antiguo) / (alto/ancho nuevo). Reescala solo la coordenada y.
+export function scaleY(a, k) {
+  const P = (q) => [q[0], q[1] * k, ...q.slice(2)];
+  if (a.t === 'text' || a.t === 'img') a.y *= k;
+  else if (a.t === 'shape') { a.a = P(a.a); a.b = P(a.b); }
+  else if (a.t === 'sig') a.ss = a.ss.map((l) => l.map(P));
+  else a.p = a.p.map(P);
+  return a;
+}

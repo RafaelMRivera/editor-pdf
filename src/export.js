@@ -57,7 +57,7 @@ async function stamp(pg, font, P, assets, embed) {
 }
 
 // doc: metadatos; pages: [{w,h,ann}]; bytes: archivo original (pdf o imagen)
-export async function buildPdf(doc, pages, assets, bytes) {
+export async function buildPdf(doc, pages, assets, bytes, only = null) {
   const out = doc.kind === 'pdf' ? await PDFDocument.load(bytes, { ignoreEncryption: true }) : await PDFDocument.create();
   const font = await out.embedFont(StandardFonts.Helvetica);
   const cache = new Map();
@@ -70,7 +70,8 @@ export async function buildPdf(doc, pages, assets, bytes) {
     return e;
   };
   const existing = out.getPages();
-  for (let i = 0; i < pages.length; i++) {
+  const idx = only ?? pages.map((_, i) => i);
+  for (const i of idx) {
     const P = pages[i];
     let pg;
     if (doc.kind === 'pdf') pg = existing[i];
@@ -82,11 +83,14 @@ export async function buildPdf(doc, pages, assets, bytes) {
       } else {
         for (const o of ops(doc.template, P.w, P.h)) {
           if (o.t === 'l') pg.drawLine({ start: { x: o.x1, y: P.h - o.y1 }, end: { x: o.x2, y: P.h - o.y2 }, thickness: o.lw, color: hex(o.c) });
+          else if (o.t === 'r') pg.drawRectangle({ x: o.x, y: P.h - o.y - o.h, width: o.w, height: o.h, borderColor: hex(o.c), borderWidth: o.lw });
+          else if (o.t === 'c') pg.drawCircle({ x: o.x, y: P.h - o.y, size: o.r, borderColor: hex(o.c), borderWidth: o.lw });
           else pg.drawCircle({ x: o.x, y: P.h - o.y, size: o.r, color: hex(o.c) });
         }
       }
     }
     if (P.ann.length) await stamp(pg, font, P, assets, embed);
   }
+  if (doc.kind === 'pdf' && only) for (let i = existing.length - 1; i >= 0; i--) if (!only.includes(i)) out.removePage(i);
   return out.save();
 }

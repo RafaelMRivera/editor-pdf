@@ -1,11 +1,11 @@
 import * as pdfjs from 'pdfjs-dist';
 import * as db from './db.js';
 import { cfg, saveCfg } from './settings.js';
-import { paintTemplate, PAGE_W, PAGE_H, TEMPLATES } from './templates.js';
-import { drawAnn, hooks, strokePath, bboxW, hits, erasePartial, xf, textBox, FONT, LH } from './ann.js';
+import { paintTemplate, PAGE_W, PAGE_H, TEMPLATES, PAPER, paperName } from './templates.js';
+import { drawAnn, hooks, strokePath, bboxW, hits, erasePartial, xf, scaleY, textBox, FONT, LH } from './ann.js';
 import { buildPdf } from './export.js';
 import { $, $$, hydrate, svg, uid, toast, menuSheet, dropMenu, sheet, deliver, loadImageCanvas, canvasBlob } from './ui.js';
-import { exportDoc } from './library.js';
+import { exportDoc, backupExport, templatePicker } from './library.js';
 
 const TOOLS = [['pen', 'Lápiz'], ['hl', 'Resaltador'], ['erase', 'Borrador'], ['lasso', 'Lazo'], ['shape', 'Formas'], ['text', 'Texto'], ['sig', 'Firma'], ['hand', 'Mano']];
 const COLORS = ['#111111', '#6b7280', '#1a56db', '#0e9f6e', '#e02424', '#ff5a1f', '#ffe600', '#f472b6', '#7c3aed'];
@@ -752,22 +752,6 @@ $('#eBack').onclick = () => (location.hash = '#/');
 $('#eTitle').onchange = (e) => { if (E.doc && e.target.value.trim()) { E.doc.name = e.target.value.trim(); scheduleSave(); } };
 $('#selBar').onclick = (e) => { const x = e.target.closest('button'); if (x) selAction({ sCut: 'cut', sCopy: 'copy', sPaste: 'paste', sDup: 'dup', sDel: 'del' }[x.id]); };
 
-const pageActions = () => [
-  ...(cfg.cast ? [{ label: 'Presentar a pantalla completa', fn: startPresent }] : []),
-  ...(E.doc.kind === 'note' ? [{ label: 'Añadir página', fn: addPage }] : []),
-  ...(E.doc.kind === 'note' && E.pages.length > 1 ? [{ label: 'Eliminar esta página', danger: true, fn: delPage }] : []),
-  { label: 'Acercar', fn: () => setScale(E.scale * 1.25) },
-  { label: 'Alejar', fn: () => setScale(E.scale / 1.25) },
-  { label: 'Borrar marcas de esta página', danger: true, fn: () => { const p = E.pages[E.cur]; if (p.ann.length && confirm('¿Borrar todas las marcas de esta página?')) { p.ann = []; E.sel = null; redraw(E.cur); commit(); } } },
-];
-const pageSettings = () => [
-  ...(E.doc.kind === 'note' ? [{
-    label: 'Plantilla de la página',
-    sub: TEMPLATES.map((t) => ({ label: t.n, on: E.doc.template === t.id, fn: () => { E.doc.template = t.id; const keep = viewer.scrollTop; buildPages(); viewer.scrollTop = keep; scheduleSave(); } })),
-  }] : []),
-  { label: 'Ajustar al ancho', fn: () => setScale(fitScale()) },
-  { label: 'Zoom 100 %', fn: () => setScale(1) },
-];
 function printDoc() {
   toast('Preparando impresión…');
   buildPdf(E.doc, E.pages, E.assets, E.bytes).then((out) => {
@@ -782,10 +766,11 @@ function printDoc() {
 }
 $('#eMenu').onclick = () => dropMenu([
   { label: E.view ? 'Editar' : 'Sólo ver', fn: () => setView(!E.view) },
-  { label: 'Exportar…', sub: [{ label: 'Exportar como PDF', fn: exportPdf }, { label: 'Exportar página como imagen', fn: exportImage }] },
+  ...(cfg.cast ? [{ label: 'Presentar', fn: startPresent }] : []),
+  { label: 'Exportar…', fn: openExport },
   { label: 'Imprimir', fn: printDoc },
-  { label: 'Acciones en la página', sub: pageActions() },
-  { label: 'Ajustes de página', sub: pageSettings() },
+  { label: 'Acciones en la página', fn: openPageActions },
+  { label: 'Ajustes de página', fn: openPageSettings },
   { label: 'Pegar', fn: () => (E.view ? toast('Cambia a modo edición para pegar') : E.clip ? paste() : toast('No hay nada copiado')) },
   { label: 'Compartir comentarios', fn: () => window.open('https://github.com/RafaelMRivera/editor-pdf/issues/new', '_blank', 'noopener') },
   { label: 'Ayuda', sub: [
@@ -793,47 +778,155 @@ $('#eMenu').onclick = () => dropMenu([
     { label: 'Ajustes', fn: () => (location.hash = '#/settings') },
   ] },
 ]);
-function addPage() {
-  E.pages.push({ w: PAGE_W, h: PAGE_H, ann: [] });
+
+/* ---------- cambios de estructura (páginas) ---------- */
+function structural() {
+  E.sel = null;
+  E.hist = snapshot(); E.undo = []; E.redo = [];
   const keep = viewer.scrollTop;
   buildPages();
   viewer.scrollTop = keep;
-  commit();
-  goPage(E.pages.length - 1);
-  updatePager();
+  syncButtons(); updatePager(); scheduleSave();
 }
+const blankPage = () => ({ w: E.pages[0].w, h: E.pages[0].h, ann: [] });
+function insertAt(i, page) {
+  E.pages.splice(i, 0, page);
+  structural();
+  goPage(i);
+}
+function addPage() { insertAt(E.pages.length, blankPage()); }
 function delPage() {
   if (!confirm('¿Eliminar esta página y sus marcas?')) return;
   E.pages.splice(E.cur, 1);
-  E.hist = snapshot(); E.undo = []; E.redo = [];
-  buildPages(); syncButtons(); updatePager(); scheduleSave();
+  structural();
 }
-async function exportPdf() {
+async function insertPdf(file) {
+  if (!file) return;
   try {
-    toast('Generando PDF…');
-    await saveNow(false);
-    const out = await buildPdf(E.doc, E.pages, E.assets, E.bytes);
-    await deliver(new Blob([out], { type: 'application/pdf' }), E.doc.name + '.pdf');
-  } catch (e) { console.error(e); alert('No se pudo exportar: ' + e.message); }
-}
-async function exportImage() {
-  try {
-    const i = E.cur, p = E.pages[i];
-    const W = E.doc.kind === 'img' ? p.nw : 1800, H = Math.round((W * p.h) / p.w);
-    const c = document.createElement('canvas');
-    c.width = W; c.height = H;
-    const ctx = c.getContext('2d');
-    if (E.doc.kind === 'pdf') {
-      const page = await E.pdf.getPage(i + 1);
-      const vp = page.getViewport({ scale: W / page.getViewport({ scale: 1 }).width });
+    toast('Insertando PDF…');
+    const pdf = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+    const w = E.pages[0].w;
+    let at = E.cur + 1;
+    for (let n = 1; n <= pdf.numPages; n++) {
+      const pg = await pdf.getPage(n);
+      const v1 = pg.getViewport({ scale: 1 });
+      const vp = pg.getViewport({ scale: 1400 / v1.width });
+      const c = document.createElement('canvas');
       c.width = Math.round(vp.width); c.height = Math.round(vp.height);
-      await page.render({ canvasContext: ctx, viewport: vp, canvas: c }).promise;
-    } else if (E.doc.kind === 'img') ctx.drawImage(E.img, 0, 0, W, H);
-    else paintTemplate(ctx, E.doc.template, W, H, p.w, p.h);
-    p.ann.forEach((a) => drawAnn(ctx, a, c.width, c.height, E.assets));
-    const png = E.doc.mime === 'image/png';
-    await deliver(await canvasBlob(c, png ? 'image/png' : 'image/jpeg', cfg.quality), `${E.doc.name}-p${i + 1}.${png ? 'png' : 'jpg'}`);
-  } catch (e) { console.error(e); alert('No se pudo exportar: ' + e.message); }
+      await pg.render({ canvasContext: c.getContext('2d'), viewport: vp, canvas: c }).promise;
+      const id = uid(), r = v1.height / v1.width;
+      E.assets[id] = c.toDataURL('image/jpeg', 0.82);
+      E.pages.splice(at++, 0, { w, h: w * r, ann: [{ t: 'img', id, x: 0, y: 0, w: 1, h: r }] });
+    }
+    structural();
+    goPage(E.cur + 1);
+  } catch (e) { console.error(e); alert('No se pudo insertar el PDF.'); }
+}
+$('#fInsPdf').onchange = (e) => { insertPdf(e.target.files[0]); e.target.value = ''; };
+
+/* ---------- Acciones en la página (como Squid) ---------- */
+function openPageActions() {
+  if (E.view) return toast('Cambia a modo edición para usar estas acciones');
+  const note = E.doc.kind === 'note';
+  const only = (fn) => () => (note ? fn() : toast('Esta acción solo está disponible en notas'));
+  menuSheet('Acciones en la página', [
+    { label: 'Seleccionar todo', fn: () => { const p = E.pages[E.cur]; if (!p.ann.length) return toast('La página está vacía'); setTool('lasso'); selectItems(E.cur, [...p.ann]); } },
+    { label: 'Borrar los datos de la página', fn: () => { const p = E.pages[E.cur]; if (p.ann.length && confirm('¿Borrar todas las marcas de esta página?')) { p.ann = []; E.sel = null; redraw(E.cur); commit(); } } },
+    { label: 'Duplicar página', fn: only(() => insertAt(E.cur + 1, { w: E.pages[E.cur].w, h: E.pages[E.cur].h, ann: structuredClone(E.pages[E.cur].ann) })) },
+    { label: 'Insertar página…', fn: only(() => insertAt(E.cur + 1, blankPage())) },
+    { label: 'Insertar un PDF…', fn: only(() => $('#fInsPdf').click()) },
+    { label: 'Borrar página', fn: only(() => (E.pages.length > 1 ? delPage() : toast('Una nota necesita al menos una página'))) },
+  ]);
+}
+
+/* ---------- Ajustes de página: tamaño del papel y fondo ---------- */
+function openPageSettings() {
+  const note = E.doc.kind === 'note';
+  let paper = paperName(E.pages[0].w, E.pages[0].h), tpl = E.doc.template;
+  const box = document.createElement('div');
+  box.className = 'dlg';
+  const row = (label, getVal, onTap) => {
+    const r = document.createElement('div');
+    r.className = 'prow';
+    r.innerHTML = '<b></b><span></span>';
+    $('b', r).textContent = label;
+    const sp = $('span', r);
+    sp.textContent = getVal();
+    r.onclick = () => onTap(() => (sp.textContent = getVal()));
+    box.append(r);
+  };
+  let close;
+  if (note) {
+    row('Tamaño del papel', () => paper, (refresh) =>
+      menuSheet('Tamaño del papel', PAPER.map(([n]) => ({ label: n + (n === paper ? ' ✓' : ''), fn: () => { paper = n; refresh(); } }))));
+    row('Fondo', () => TEMPLATES.find((t) => t.id === tpl)?.n ?? '', (refresh) =>
+      templatePicker((id) => { tpl = id; refresh(); }, 'Selecciona el fondo', tpl));
+  }
+  row('Zoom', () => 'Ajustar al ancho', () => { close(); setScale(fitScale()); });
+  row('Zoom', () => '100 %', () => { close(); setScale(1); });
+  const btns = document.createElement('div');
+  btns.className = 'dbtns';
+  btns.innerHTML = '<button class="c">Cancelar</button>' + (note ? '<button class="ok">Aplicar</button>' : '');
+  box.append(btns);
+  close = sheet('Ajustes de página', box);
+  $('.c', btns).onclick = close;
+  if (note) $('.ok', btns).onclick = () => {
+    close();
+    const sz = PAPER.find(([n]) => n === paper);
+    if (sz && paperName(E.pages[0].w, E.pages[0].h) !== paper) {
+      for (const p of E.pages) {
+        const k = p.h / p.w / (sz[2] / sz[1]);
+        p.ann.forEach((x) => scaleY(x, k));
+        p.w = sz[1]; p.h = sz[2];
+      }
+    }
+    E.doc.template = tpl;
+    structural();
+  };
+}
+
+/* ---------- Exportar apunte (como Squid) ---------- */
+function openExport() {
+  const multi = E.pages.length > 1;
+  const box = document.createElement('div');
+  box.className = 'dlg';
+  const fmts = [['pdf', 'PDF'], ['note', 'Nota de Editor PDF'], ['png', 'PNG'], ['jpeg', 'JPEG']];
+  box.innerHTML = '<h4>Páginas</h4><div class="opts"><label><input type="radio" name="xs" value="all" checked /> Todo el apunte</label><label><input type="radio" name="xs" value="page" /> Esta página</label></div>' +
+    '<h4>Formato del archivo</h4><div class="opts">' + fmts.map(([v, l], i) => '<label><input type="radio" name="xf" value="' + v + '"' + (i === 0 ? ' checked' : '') + ' /> ' + l + '</label>').join('') + '</div>' +
+    '<div class="dbtns"><button class="c">Cancelar</button><button class="ok">Compartir</button></div>';
+  const close = sheet('Exportar apunte', box);
+  if (!multi) box.querySelectorAll('input[name=xs]').forEach((r) => (r.disabled = true));
+  $('.c', box).onclick = close;
+  $('.ok', box).onclick = async () => {
+    const scope = box.querySelector('input[name=xs]:checked').value, fmt = box.querySelector('input[name=xf]:checked').value;
+    close();
+    const pages = scope === 'page' ? [E.cur] : E.pages.map((_, i) => i);
+    try {
+      if (fmt === 'png' || fmt === 'jpeg') { for (const i of pages) await exportImage(i, fmt); return; }
+      toast('Generando archivo…');
+      await saveNow(false);
+      if (fmt === 'note') return await backupExport([E.doc.id]);
+      const out = await buildPdf(E.doc, E.pages, E.assets, E.bytes, scope === 'page' ? pages : null);
+      await deliver(new Blob([out], { type: 'application/pdf' }), E.doc.name + (scope === 'page' ? '-p' + (E.cur + 1) : '') + '.pdf');
+    } catch (e) { console.error(e); alert('No se pudo exportar: ' + e.message); }
+  };
+}
+async function exportImage(i, fmt) {
+  const p = E.pages[i];
+  const W = E.doc.kind === 'img' ? p.nw : 1800, H = Math.round((W * p.h) / p.w);
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+  if (E.doc.kind === 'pdf') {
+    const page = await E.pdf.getPage(i + 1);
+    const vp = page.getViewport({ scale: W / page.getViewport({ scale: 1 }).width });
+    c.width = Math.round(vp.width); c.height = Math.round(vp.height);
+    await page.render({ canvasContext: ctx, viewport: vp, canvas: c }).promise;
+  } else if (E.doc.kind === 'img') ctx.drawImage(E.img, 0, 0, W, H);
+  else paintTemplate(ctx, E.doc.template, W, H, p.w, p.h);
+  p.ann.forEach((x) => drawAnn(ctx, x, c.width, c.height, E.assets));
+  const png = fmt === 'png';
+  await deliver(await canvasBlob(c, png ? 'image/png' : 'image/jpeg', cfg.quality), E.doc.name + '-p' + (i + 1) + (png ? '.png' : '.jpg'));
 }
 
 document.addEventListener('keydown', (e) => {

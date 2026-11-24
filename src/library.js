@@ -2,7 +2,7 @@ import * as pdfjs from 'pdfjs-dist';
 import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import * as db from './db.js';
 import { cfg } from './settings.js';
-import { TEMPLATES, PAGE_W, PAGE_H, paintTemplate } from './templates.js';
+import { TEMPLATES, CATEGORIES, PAGE_W, PAGE_H, paintTemplate } from './templates.js';
 import { $, $$, hydrate, svg, uid, toast, sheet, menuSheet, loadImageCanvas, canvasBlob, deliver, installApp } from './ui.js';
 import { buildPdf } from './export.js';
 
@@ -23,11 +23,20 @@ function render() {
   const q = $('#lSearch').value.trim().toLowerCase();
   let list = docs.filter((d) => (view === 'fav' ? d.starred : true) && (!q || d.name.toLowerCase().includes(q)));
   list.sort((a, b) => (sort === 'name' ? a.name.localeCompare(b.name) : sort === 'created' ? b.created - a.created : b.updated - a.updated));
-  $('#lTitle').textContent = view === 'fav' ? 'Favoritos' : 'Todos los apuntes';
-  $('#emptyLib').hidden = list.length > 0;
+  $('#lTitle').textContent = view === 'fav' ? 'Favoritos' : 'Apuntes Recientes';
+  const invite = view === 'all' && !q && !localStorage.getItem('ep-invite');
+  $('#emptyLib').hidden = list.length > 0 || invite;
   const grid = $('#grid');
-  grid.hidden = list.length === 0;
+  grid.hidden = list.length === 0 && !invite;
   grid.innerHTML = '';
+  if (invite) {
+    const iv = document.createElement('div');
+    iv.className = 'invite';
+    iv.innerHTML = '<h3>¡Estás invitado a instalar Editor PDF!</h3><p>Úsala como una app: a pantalla completa, sin conexión y con tus apuntes siempre a mano.</p><div><button class="ig">Ignorar</button><button class="mi">Más información</button></div>';
+    $('.ig', iv).onclick = () => { try { localStorage.setItem('ep-invite', '1'); } catch {} render(); };
+    $('.mi', iv).onclick = installApp;
+    grid.append(iv);
+  }
   for (const d of list) {
     const c = document.createElement('div');
     c.className = 'card-d';
@@ -131,34 +140,52 @@ async function newNote(tpl) {
   await db.putDoc(d);
   location.hash = '#/doc/' + d.id;
 }
-function templatePicker() {
+export function templatePicker(onPick, title = 'Nueva nota', current = null) {
   const box = document.createElement('div');
-  box.className = 'tgrid';
-  let g = '';
+  const tabsEl = document.createElement('div');
+  tabsEl.className = 'ttabs';
+  const gridEl = document.createElement('div');
+  gridEl.className = 'tgrid';
+  box.append(tabsEl, gridEl);
   let close;
-  for (const t of TEMPLATES) {
-    if (t.g !== g) { g = t.g; const h = document.createElement('h4'); h.textContent = g; box.append(h); }
-    const b = document.createElement('button');
-    const c = document.createElement('canvas');
-    c.width = 200; c.height = Math.round((200 * PAGE_H) / PAGE_W);
-    paintTemplate(c.getContext('2d'), t.id, c.width, c.height);
-    b.append(c, t.n);
-    b.onclick = () => { close(); newNote(t.id); };
-    box.append(b);
-  }
-  close = sheet('Nueva nota', box, true);
+  const cats = ['Todo', ...CATEGORIES];
+  const show = (cat) => {
+    tabsEl.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x.dataset.c === cat));
+    gridEl.innerHTML = '';
+    let g = '';
+    for (const t of TEMPLATES) {
+      if (cat !== 'Todo' && t.g !== cat) continue;
+      if (cat === 'Todo' && t.g !== g) { g = t.g; const h = document.createElement('h4'); h.textContent = g; gridEl.append(h); }
+      const bt = document.createElement('button');
+      if (t.id === current) bt.className = 'cur';
+      const c = document.createElement('canvas');
+      c.width = 200; c.height = Math.round((200 * PAGE_H) / PAGE_W);
+      paintTemplate(c.getContext('2d'), t.id, c.width, c.height);
+      bt.append(c, t.n);
+      bt.onclick = () => { close(); onPick(t.id); };
+      gridEl.append(bt);
+    }
+  };
+  cats.forEach((c) => {
+    const bt = document.createElement('button');
+    bt.dataset.c = c; bt.textContent = c.toUpperCase();
+    bt.onclick = () => show(c);
+    tabsEl.append(bt);
+  });
+  close = sheet(title, box, true);
+  show('Todo');
 }
 
 /* ---------- copia de seguridad ---------- */
 const blobToDataUrl = (b) => new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); });
-export async function backupExport() {
-  const all = await db.listDocs();
+export async function backupExport(ids = null) {
+  const all = (await db.listDocs()).filter((d) => !ids || ids.includes(d.id));
   const out = [];
   for (const d of all) {
     const f = await db.getFile(d.id);
     out.push({ ...d, file: f ? await blobToDataUrl(new Blob([f])) : null });
   }
-  await deliver(new Blob([JSON.stringify({ app: 'editor-pdf', v: 1, docs: out })], { type: 'application/json' }), `editor-pdf-backup-${new Date().toISOString().slice(0, 10)}.json`);
+  await deliver(new Blob([JSON.stringify({ app: 'editor-pdf', v: 1, docs: out })], { type: 'application/json' }), ids ? `${all[0]?.name || 'nota'}.json` : `editor-pdf-backup-${new Date().toISOString().slice(0, 10)}.json`);
 }
 export async function backupImport(file) {
   try {
@@ -187,7 +214,7 @@ export function initLibrary() {
     if (a === 'pdf') $('#fPdf').click();
     if (a === 'img') $('#fImg').click();
     if (a === 'note') newNote(cfg.template);
-    if (a === 'tpl') templatePicker();
+    if (a === 'tpl') templatePicker((id) => newNote(id));
   };
   $('#grid').addEventListener('click', closeFab);
   $('#fPdf').onchange = (e) => { importPdf(e.target.files[0]); e.target.value = ''; };
