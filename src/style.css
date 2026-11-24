@@ -239,3 +239,22 @@ html.locked #lockScreen{display:flex}
 .pad.good .trail{stroke:var(--vib)}
 .padmsg{margin:0 0 6px;text-align:center;color:var(--ink)}
 .padhost{display:flex;justify-content:center}
+
+/* ---------- acceso con Google ---------- */
+#authScreen{display:none;position:fixed;inset:0;z-index:90;background:var(--abyss);color:#fff;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;text-align:center}
+html.needauth #authScreen{display:flex}
+#authScreen img{width:84px;height:84px;border-radius:20px;background:#fff}
+#authScreen h2{margin:4px 0 0;font-size:24px}
+#authMsg{margin:0 0 8px;max-width:360px;color:#cfe9d8}
+.gbtn{display:flex;align-items:center;gap:12px;background:#fff;color:#1f1f1f;border:0;border-radius:24px;padding:12px 22px;font-weight:600;font-size:15px;box-shadow:0 2px 8px #0006}
+.gbtn[hidden],.alink[hidden]{display:none}
+.gbtn svg{width:22px;height:22px;stroke:none}
+.alink{background:none;border:0;color:#9fd8b3;text-decoration:underline;font-size:14px;padding:8px}
+.adm .adm-add{display:flex;gap:8px;margin-bottom:6px}
+.adm .adm-add input{flex:1;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;min-width:0}
+.adm h4{margin:16px 0 6px;font-size:12px;color:var(--orange);font-weight:600}
+.adm-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f0f2f4}
+.adm-row .tx{flex:1;min-width:0}
+.adm-row b{display:block;font-weight:500;overflow:hidden;text-overflow:ellipsis}
+.adm-row small{color:var(--muted);font-size:12px}
+.adm-row .btn.primary{background:var(--teal)}

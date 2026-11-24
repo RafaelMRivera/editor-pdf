@@ -102,7 +102,7 @@ export function lock() {
   pad.reset();
   cooldown();
 }
-function unlock() { root.classList.remove('locked'); setInert(false); clearInterval(timer); }
+function unlock() { root.classList.remove('locked'); setInert(root.classList.contains('needauth')); clearInterval(timer); }
 function cooldown() {
   clearInterval(timer);
   const tick = () => {

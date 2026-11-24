@@ -6,6 +6,7 @@ import { TEMPLATES, CATEGORIES, PAGE_W, PAGE_H, paintTemplate } from './template
 import { $, $$, hydrate, svg, uid, toast, sheet, menuSheet, loadImageCanvas, canvasBlob, deliver, installApp } from './ui.js';
 import { buildPdf } from './export.js';
 import { openLockMenu } from './lock.js';
+import { openAdmin, openAccount } from './auth.js';
 
 pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
 
@@ -237,6 +238,8 @@ export function initLibrary() {
     if (v === 'settings') location.hash = '#/settings';
     else if (v === 'install') installApp();
     else if (v === 'lock') openLockMenu();
+    else if (v === 'admin') openAdmin();
+    else if (v === 'account') openAccount();
     else { view = v; location.hash = '#/'; render(); }
   };
   $('#fBak').onchange = (e) => { backupImport(e.target.files[0]); e.target.value = ''; };
