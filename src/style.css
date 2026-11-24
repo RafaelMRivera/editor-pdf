@@ -187,3 +187,5 @@ body.present #editor .bar,body.present #selBar{display:none!important}
 .ditem.danger{color:var(--danger)}
 .ditem.on span::after{content:' ✓';color:var(--orange)}
 .ditem.back{border-bottom:1px solid #eee;color:var(--muted)}
+
+svg.fill{fill:currentColor;stroke:none}

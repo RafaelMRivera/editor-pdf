@@ -6,7 +6,7 @@ const ICON = {
   more: 'M12 5v.01M12 12v.01M12 19v.01', search: 'M21 21l-4.3-4.3M11 18a7 7 0 110-14 7 7 0 010 14z', plus: 'M12 5v14M5 12h14', minus: 'M5 12h14',
   close: 'M6 6l12 12M18 6L6 18', pdf: 'M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8zM14 3v5h5', image: 'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M9 9.5v.01',
   note: 'M5 4h14v16H5zM9 9h6M9 13h6', template: 'M4 4h16v16H4zM4 10h16M10 10v10', sort: 'M4 6h16M7 12h10M10 18h4',
-  undo: 'M3 7v6h6M3 13a9 9 0 109-9 9 9 0 00-6.7 3L3 13', redo: 'M21 7v6h-6M21 13a9 9 0 11-9-9 9 9 0 016.7 3L21 13',
+  undo: '!M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z', redo: '!M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z',
   pen: 'M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z', hl: 'M9 11l-6 6v3h9l3-3M22 12l-4.6 4.6a2 2 0 01-2.8 0l-5.2-5.2a2 2 0 010-2.8L14 4',
   erase: 'M20 20H9l-5-5a2 2 0 010-2.8l9.2-9.2a2 2 0 012.8 0l5 5a2 2 0 010 2.8L13 20M7 11l6 6', lasso: 'M12 4c5 0 9 2 9 5s-4 5-9 5-9-2-9-5 4-5 9-5zM8 14c0 3 1 5 3 6',
   shape: 'M3 20h8v-8H3zM15 3a5 5 0 100 10 5 5 0 000-10z', text: 'M4 7V4h16v3M9 20h6M12 4v16', sig: 'M3 17c3-6 5-9 6-9s0 6 2 6 3-4 4-4 1 3 3 3 2-1 3-2M3 21h18',
@@ -20,7 +20,10 @@ const ICON = {
   edit: 'M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z', eye: 'M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12zM12 15a3 3 0 100-6 3 3 0 000 6z', present: 'M3 4h18v12H3zM8 20h8M12 16v4', palette: 'M12 3a9 9 0 100 18c1 0 2-.8 2-2 0-.6-.3-1.1-.6-1.5-.3-.4-.4-1-.1-1.4.3-.5.8-.7 1.3-.7H17a4 4 0 004-4c0-4.4-4-8.4-9-8.4zM7.5 11v.01M10 7.5v.01M14 7.5v.01', sliders: 'M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6', sun: 'M12 16a4 4 0 100-8 4 4 0 000 8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4', moon: 'M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z', nextplus: 'M6 6l6 6-6 6M17 5v6M14 8h6', zoomin: 'M21 21l-4.3-4.3M11 18a7 7 0 110-14 7 7 0 010 14zM11 8v6M8 11h6',
   zoomout: 'M21 21l-4.3-4.3M11 18a7 7 0 110-14 7 7 0 010 14zM8 11h6', page: 'M5 4h14v16H5zM12 9v6M9 12h6',
 };
-export const svg = (n) => `<svg viewBox="0 0 24 24"><path d="${ICON[n] || ''}"/></svg>`;
+export const svg = (n) => {
+  const p = ICON[n] || '';
+  return p[0] === '!' ? `<svg viewBox="0 0 24 24" class="fill"><path d="${p.slice(1)}"/></svg>` : `<svg viewBox="0 0 24 24"><path d="${p}"/></svg>`;
+};
 export function hydrate(root = document) {
   $$('[data-i]', root).forEach((el) => {
     if (!el.querySelector(':scope > svg')) el.insertAdjacentHTML('afterbegin', svg(el.dataset.i));

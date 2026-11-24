@@ -4,3 +4,5 @@ dist
 .claude
 *.log
 *.tmp.*
+*.mp4
+*.mov
