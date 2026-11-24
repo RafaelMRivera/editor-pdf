@@ -3,23 +3,45 @@ export const TEMPLATES = [
   { id: 'lined', n: 'Pautado estándar', g: 'Estándar' },
   { id: 'wide', n: 'Pautado ancho', g: 'Estándar' },
   { id: 'narrow', n: 'Pautado estrecho', g: 'Estándar' },
-  { id: 'cornell', n: 'Cornell básico', g: 'Estándar' },
+  { id: 'cornellp', n: 'Cornell básico', g: 'Estándar' },
+  { id: 'cornell', n: 'Cornell básico (pautado estándar)', g: 'Estándar' },
+  { id: 'cornells', n: 'Cornell estilizado', g: 'Estándar' },
+  { id: 'cornellsl', n: 'Cornell estilizado (pautado estándar)', g: 'Estándar' },
+  { id: 'graph1', n: 'Gráfico 1 mm', g: 'Cuadrícula' },
+  { id: 'graph2', n: 'Gráfico 2 mm', g: 'Cuadrícula' },
   { id: 'finegrid', n: 'Cuadrícula fina', g: 'Cuadrícula' },
   { id: 'grid', n: 'Cuadrícula', g: 'Cuadrícula' },
   { id: 'gridl', n: 'Cuadrícula grande', g: 'Cuadrícula' },
+  { id: 'cross', n: 'Cuadrícula cruzada', g: 'Cuadrícula' },
+  { id: 'dotss', n: 'Cuadrícula de puntos fina', g: 'Cuadrícula' },
   { id: 'dots', n: 'Puntos', g: 'Cuadrícula' },
   { id: 'dotsl', n: 'Puntos grandes', g: 'Cuadrícula' },
   { id: 'iso', n: 'Isométrica', g: 'Cuadrícula' },
+  { id: 'isodots', n: 'Puntos isométricos', g: 'Cuadrícula' },
   { id: 'eng', n: 'Ingeniería', g: 'Matemáticas e Ingeniería' },
+  { id: 'axes', n: 'Ejes cartesianos', g: 'Matemáticas e Ingeniería' },
+  { id: 'axesq', n: 'Ejes (primer cuadrante)', g: 'Matemáticas e Ingeniería' },
   { id: 'polar', n: 'Polar', g: 'Matemáticas e Ingeniería' },
-  { id: 'semilog', n: 'Semi-log', g: 'Matemáticas e Ingeniería' },
+  { id: 'polarf', n: 'Polar fino', g: 'Matemáticas e Ingeniería' },
+  { id: 'semilog', n: 'Semi-log (X)', g: 'Matemáticas e Ingeniería' },
+  { id: 'semilogy', n: 'Semi-log (Y)', g: 'Matemáticas e Ingeniería' },
   { id: 'loglog', n: 'Log-log', g: 'Matemáticas e Ingeniería' },
   { id: 'staff', n: 'Pentagrama', g: 'Música' },
+  { id: 'staffl', n: 'Pentagrama grande', g: 'Música' },
   { id: 'grand', n: 'Doble pentagrama', g: 'Música' },
-  { id: 'diary', n: 'Diario', g: 'Planificación y listas' },
-  { id: 'weekly', n: 'Semanal', g: 'Planificación y listas' },
+  { id: 'tab', n: 'Tablatura de guitarra', g: 'Música' },
+  { id: 'diary', n: 'Diario (pautado estándar)', g: 'Planificación y listas' },
+  { id: 'diaryb', n: 'Diario (en blanco)', g: 'Planificación y listas' },
+  { id: 'diaryd', n: 'Diario (cuadrícula de puntos)', g: 'Planificación y listas' },
+  { id: 'weekly', n: 'Semanal (en blanco)', g: 'Planificación y listas' },
+  { id: 'weeklyl', n: 'Semanal (pautado estándar)', g: 'Planificación y listas' },
+  { id: 'weeklyd', n: 'Semanal (cuadrícula de puntos)', g: 'Planificación y listas' },
+  { id: 'week5', n: 'Columnas semanales (5 días)', g: 'Planificación y listas' },
+  { id: 'week7', n: 'Columnas semanales (7 días)', g: 'Planificación y listas' },
   { id: 'monthly', n: 'Calendario mensual', g: 'Planificación y listas' },
+  { id: 'hours', n: 'Horario por horas', g: 'Planificación y listas' },
   { id: 'todo', n: 'Lista de tareas', g: 'Planificación y listas' },
+  { id: 'todo2', n: 'Lista de tareas (2 columnas)', g: 'Planificación y listas' },
   { id: 'cols', n: 'Tres columnas', g: 'Planificación y listas' },
 ];
 export const CATEGORIES = [...new Set(TEMPLATES.map((t) => t.g))];
@@ -142,6 +164,117 @@ export function ops(id, w = PAGE_W, h = PAGE_H) {
       L(40, 70, w - 40, 70, '#6b8fb5', 1);
       for (let i = 1; i < 3; i++) L(40 + i * cw, 70, 40 + i * cw, h - 40, '#6b8fb5', 0.8);
       rows(26, 96, 40, w - 40, '#d5e0ee', h - 40);
+      break;
+    }
+
+    case 'cornellp':
+      L(0, 90, w, 90, '#6b8fb5', 1);
+      L(150, 90, 150, h - 130, '#6b8fb5', 1);
+      L(0, h - 130, w, h - 130, '#6b8fb5', 1);
+      break;
+    case 'cornells':
+    case 'cornellsl':
+      R(30, 30, w - 60, 60, '#6b8fb5', 1.2);
+      R(30, 100, 120, h - 260, '#6b8fb5', 1.2);
+      R(160, 100, w - 190, h - 260, '#6b8fb5', 1.2);
+      R(30, h - 150, w - 60, 120, '#6b8fb5', 1.2);
+      if (id === 'cornellsl') rows(26, 126, 160, w - 30, '#c7d6e8', h - 160);
+      break;
+    case 'graph1':
+    case 'graph2': {
+      const sp = id === 'graph1' ? 2.835 : 5.67;
+      for (let i = 1; i * sp < w; i++) L(i * sp, 0, i * sp, h, i % 10 === 0 ? '#a9c3e0' : i % 5 === 0 ? '#c9dcef' : '#e3edf7', i % 10 === 0 ? 0.5 : i % 5 === 0 ? 0.35 : 0.2);
+      for (let i = 1; i * sp < h; i++) L(0, i * sp, w, i * sp, i % 10 === 0 ? '#a9c3e0' : i % 5 === 0 ? '#c9dcef' : '#e3edf7', i % 10 === 0 ? 0.5 : i % 5 === 0 ? 0.35 : 0.2);
+      break;
+    }
+    case 'cross':
+      for (let y = 20; y < h; y += 20) for (let x = 20; x < w; x += 20) { L(x - 3, y, x + 3, y, '#9fb3c8', 0.5); L(x, y - 3, x, y + 3, '#9fb3c8', 0.5); }
+      break;
+    case 'dotss':
+      for (let y = 20; y < h - 10; y += 14) for (let x = 20; x < w - 10; x += 14) o.push({ t: 'd', x, y, r: 0.7, c: '#9aa4b2' });
+      break;
+    case 'isodots': {
+      let row = 0;
+      for (let y = 24; y < h - 10; y += 20, row++) for (let x = 24 + (row % 2 ? 11.5 : 0); x < w - 10; x += 23) o.push({ t: 'd', x, y, r: 0.9, c: '#9aa4b2' });
+      break;
+    }
+    case 'axes':
+    case 'axesq': {
+      grid(20, '#e1ebf5', 0.4);
+      const ox = id === 'axes' ? Math.round(w / 2 / 20) * 20 : 60, oy = id === 'axes' ? Math.round(h / 2 / 20) * 20 : Math.round((h - 60) / 20) * 20;
+      L(id === 'axes' ? 10 : ox, oy, w - 10, oy, '#4b5f74', 1.2);
+      L(ox, id === 'axes' ? h - 10 : 10, ox, id === 'axes' ? 10 : oy, '#4b5f74', 1.2);
+      if (id === 'axes') L(10, oy, ox, oy, '#4b5f74', 1.2);
+      L(w - 10, oy, w - 18, oy - 4, '#4b5f74', 1.2); L(w - 10, oy, w - 18, oy + 4, '#4b5f74', 1.2);
+      L(ox, 10, ox - 4, 18, '#4b5f74', 1.2); L(ox, 10, ox + 4, 18, '#4b5f74', 1.2);
+      break;
+    }
+    case 'polarf': {
+      const cx = w / 2, cy = h / 2;
+      for (let r = 17.5; r <= 280; r += 17.5) C(cx, cy, r, r % 70 === 0 ? '#7f9bb8' : '#b8c7d8', r % 70 === 0 ? 0.7 : 0.35);
+      for (let a2 = 0; a2 < 360; a2 += 7.5) { const t = (a2 * Math.PI) / 180; L(cx, cy, cx + 280 * Math.cos(t), cy + 280 * Math.sin(t), a2 % 30 === 0 ? '#7f9bb8' : '#c9d6e4', a2 % 30 === 0 ? 0.6 : 0.3); }
+      break;
+    }
+    case 'semilogy': {
+      const x0 = 40, wd = w - 80, dec = 4, dh = 180, yb = h - 60;
+      for (let x = x0; x <= x0 + wd; x += 20) L(x, yb - dec * dh, x, yb, '#b8c7d8', 0.4);
+      for (let d = 0; d < dec; d++)
+        for (let n = 1; n <= 10; n++) {
+          if (n === 10 && d < dec - 1) continue;
+          const major = n === 1 || n === 10, y = yb - dh * (d + Math.log10(n));
+          L(x0, y, x0 + wd, y, major ? '#7f9bb8' : '#b8c7d8', major ? 0.8 : 0.4);
+        }
+      break;
+    }
+    case 'staffl':
+      for (let y = 70; y + 36 < h - 40; y += 96) {
+        for (let i = 0; i < 5; i++) L(40, y + i * 9, w - 40, y + i * 9, '#555555', 0.7);
+        L(40, y, 40, y + 36, '#555555', 0.7); L(w - 40, y, w - 40, y + 36, '#555555', 0.7);
+      }
+      break;
+    case 'tab':
+      for (let y = 70; y + 50 < h - 40; y += 90) {
+        for (let i = 0; i < 6; i++) L(40, y + i * 10, w - 40, y + i * 10, '#555555', 0.6);
+        L(40, y, 40, y + 50, '#555555', 0.9); L(w - 40, y, w - 40, y + 50, '#555555', 0.6);
+      }
+      break;
+    case 'diaryb':
+      L(40, 70, w - 40, 70, '#6b8fb5', 1.2);
+      L(w - 210, 52, w - 40, 52, '#6b8fb5', 0.8);
+      break;
+    case 'diaryd':
+      L(40, 70, w - 40, 70, '#6b8fb5', 1.2);
+      L(w - 210, 52, w - 40, 52, '#6b8fb5', 0.8);
+      for (let y = 100; y < h - 40; y += 20) for (let x = 40; x <= w - 40; x += 20) o.push({ t: 'd', x, y, r: 0.9, c: '#9aa4b2' });
+      break;
+    case 'weeklyl':
+    case 'weeklyd': {
+      const bw = (w - 80) / 2, bh = (h - 110) / 4;
+      for (let r = 0; r < 4; r++) for (let c = 0; c < 2; c++) {
+        const x = 40 + c * bw, y = 60 + r * bh;
+        R(x, y, bw, bh, '#8aa6c4'); L(x, y + 22, x + bw, y + 22, '#8aa6c4');
+        if (id === 'weeklyl') for (let yy = y + 44; yy < y + bh - 4; yy += 22) L(x + 8, yy, x + bw - 8, yy, '#c7d6e8');
+        else for (let yy = y + 36; yy < y + bh - 8; yy += 16) for (let xx = x + 12; xx < x + bw - 8; xx += 16) o.push({ t: 'd', x: xx, y: yy, r: 0.7, c: '#9aa4b2' });
+      }
+      break;
+    }
+    case 'week5':
+    case 'week7': {
+      const n = id === 'week5' ? 5 : 7, cw = (w - 60) / n;
+      R(30, 60, w - 60, h - 100, '#8aa6c4');
+      L(30, 90, w - 30, 90, '#8aa6c4');
+      for (let i = 1; i < n; i++) L(30 + i * cw, 60, 30 + i * cw, h - 40, '#8aa6c4', 0.6);
+      rows(26, 116, 30, w - 30, '#dde6f1', h - 40);
+      break;
+    }
+    case 'hours':
+      R(30, 60, w - 60, h - 100, '#8aa6c4');
+      L(90, 60, 90, h - 40, '#8aa6c4');
+      for (let y = 100; y < h - 40; y += 40) L(30, y, w - 30, y, '#c7d6e8');
+      break;
+    case 'todo2': {
+      const cw = (w - 100) / 2;
+      for (let c = 0; c < 2; c++) for (let y = 80; y < h - 40; y += 30) { const x = 40 + c * (cw + 20); R(x, y - 11, 12, 12, '#6b8fb5'); L(x + 22, y, x + cw, y, '#c7d6e8'); }
       break;
     }
   }
