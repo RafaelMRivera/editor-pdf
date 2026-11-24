@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#3d97b8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Editor PDF" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <title>Editor PDF</title>
+</head>
+<body>
+  <!-- ============ BIBLIOTECA ============ -->
+  <section id="lib">
+    <header class="bar">
+      <button id="lMenu" class="btn ico" data-i="menu" title="Menú"></button>
+      <h1 id="lTitle">Todos los apuntes</h1>
+      <span class="sp"></span>
+      <div id="searchBox"><input id="lSearch" type="search" placeholder="Buscar…" /></div>
+      <button id="lSort" class="btn ico" data-i="sort" title="Ordenar"></button>
+    </header>
+    <div id="grid"></div>
+    <div id="emptyLib" hidden>
+      <h2>Aún no tienes apuntes</h2>
+      <p>Toca <b>+</b> para importar un PDF o una imagen, o crear una nota.</p>
+    </div>
+    <div id="fabMenu" hidden>
+      <button data-a="pdf"><span>Importar PDF</span><i data-i="pdf"></i></button>
+      <button data-a="img"><span>Importar imagen</span><i data-i="image"></i></button>
+      <button data-a="note"><span>Nota</span><i data-i="note"></i></button>
+      <button data-a="tpl"><span>Nota con plantilla</span><i data-i="template"></i></button>
+    </div>
+    <button id="fab" data-i="plus" title="Nuevo"></button>
+    <aside id="drawer" hidden>
+      <div class="scrim"></div>
+      <nav>
+        <div class="brand">Editor PDF</div>
+        <button data-v="all" data-i="note">Todos los apuntes</button>
+        <button data-v="fav" data-i="star">Favoritos</button>
+        <hr />
+        <button data-v="settings" data-i="settings">Ajustes</button>
+        <button data-v="install" data-i="install">Instalar aplicación</button>
+      </nav>
+    </aside>
+  </section>
+
+  <!-- ============ EDITOR ============ -->
+  <section id="editor" hidden>
+    <header class="bar">
+      <button id="eBack" class="btn ico" data-i="back" title="Volver"></button>
+      <input id="eTitle" spellcheck="false" />
+      <span class="sp"></span>
+      <button id="eMode" class="btn ico" title="Sólo mirar / Editar"></button>
+      <button id="eUndo" class="btn ico" data-i="undo" title="Deshacer" disabled></button>
+      <button id="eRedo" class="btn ico" data-i="redo" title="Rehacer" disabled></button>
+      <button id="eColor" class="btn ico" title="Color"><i class="dot"></i></button>
+      <button id="eTool" class="btn ico" title="Herramientas"></button>
+      <button id="eImg" class="btn ico" data-i="img" title="Insertar imagen"></button>
+      <span class="pager hide-s">
+        <button id="ePrev" class="btn ico" data-i="prev"></button>
+        <span id="ePage">1</span>
+        <button id="eNext" class="btn ico" data-i="next"></button>
+      </span>
+      <button id="eMenu" class="btn ico" data-i="more" title="Más"></button>
+    </header>
+
+    <main id="viewer"><div id="pages"></div></main>
+
+    <button id="pExit" hidden>Salir de la presentación</button>
+    <div id="selBar" hidden>
+      <button id="sCut" data-i="cut" title="Cortar"></button>
+      <button id="sCopy" data-i="copy" title="Copiar"></button>
+      <button id="sPaste" data-i="paste" title="Pegar"></button>
+      <button id="sDup" data-i="dup" title="Duplicar"></button>
+      <button id="sDel" data-i="trash" title="Eliminar"></button>
+    </div>
+
+    <div id="pop" hidden>
+      <div id="popTools" class="tabs"></div>
+      <div class="sect" data-for="pen hl shape"><canvas id="prev" width="320" height="70"></canvas></div>
+      <div class="sect" data-for="pen hl shape erase text sig">
+        <div class="row"><span id="sizeLabel">Grosor</span><input id="psize" type="range" /><span id="pval"></span></div>
+      </div>
+      <div class="sect" data-for="pen hl shape text"><div id="pcolors"></div></div>
+      <div class="sect" data-for="pen"><label class="chk"><input id="ppress" type="checkbox" /> Sensibilidad a la presión</label></div>
+      <div class="sect" data-for="erase">
+        <label class="chk"><input type="radio" name="emode" value="full" /> Borrar trazo completo</label>
+        <label class="chk"><input type="radio" name="emode" value="part" /> Borrar solo lo que toco</label>
+      </div>
+      <div class="sect" data-for="shape"><div id="pshapes" class="seg"></div></div>
+      <div class="sect" data-for="sig"><button id="psig" class="btn small">Cambiar firma</button></div>
+      <div class="sect" data-for="lasso"><p class="hint">Dibuja un círculo alrededor de lo que quieras mover, copiar o borrar. Arrastra la esquina para cambiar el tamaño.</p></div>
+      <div class="sect" data-for="hand"><p class="hint">Con la mano arrastras la página. También: dos dedos para acercar/alejar.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ AJUSTES ============ -->
+  <section id="settings" hidden>
+    <header class="bar">
+      <button id="sBack" class="btn ico" data-i="back"></button>
+      <h1 id="sTitle">Ajustes de Editor PDF</h1>
+    </header>
+    <div id="sBody"></div>
+  </section>
+
+  <div id="sigModal" class="modal" hidden>
+    <div class="card">
+      <h2>Dibuja tu firma</h2>
+      <canvas id="sigCanvas" width="640" height="260"></canvas>
+      <div class="row">
+        <button class="btn small" data-sc="#111111">Negro</button>
+        <button class="btn small" data-sc="#1a56db">Azul</button>
+        <span class="sp"></span>
+        <button id="sigClear" class="btn small">Limpiar</button>
+        <button id="sigCancel" class="btn small">Cancelar</button>
+        <button id="sigOk" class="btn small primary">Usar firma</button>
+      </div>
+    </div>
+  </div>
+
+  <input id="fPdf" type="file" accept="application/pdf,.pdf" hidden />
+  <input id="fImg" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" hidden />
+  <input id="fIns" type="file" accept="image/*" hidden />
+  <input id="fCam" type="file" accept="image/*" capture="environment" hidden />
+  <input id="fBak" type="file" accept="application/json,.json" hidden />
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
