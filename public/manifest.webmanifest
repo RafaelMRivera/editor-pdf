@@ -1,17 +1,32 @@
 {
   "id": "./",
-  "name": "Editor PDF",
-  "short_name": "Editor PDF",
+  "name": "PenFich",
+  "short_name": "PenFich",
   "description": "Notas, PDF e imágenes: resalta, dibuja con lápiz, escribe y firma.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#3d97b8",
-  "theme_color": "#3d97b8",
+  "background_color": "#F1F8F3",
+  "theme_color": "#0A5C36",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

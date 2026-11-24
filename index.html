@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-  <meta name="theme-color" content="#3d97b8" />
+  <meta name="theme-color" content="#0A5C36" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="Editor PDF" />
+  <meta name="apple-mobile-web-app-title" content="PenFich" />
   <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="./icon-192.png" />
-  <title>Editor PDF</title>
+  <link rel="icon" href="./favicon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+  <title>PenFich</title>
 </head>
 <body>
   <!-- ============ BIBLIOTECA ============ -->
@@ -24,6 +24,7 @@
     </header>
     <div id="grid"></div>
     <div id="emptyLib" hidden>
+      <img src="./icon-192.png" alt="PenFich" />
       <h2>Aún no tienes apuntes</h2>
       <p>Toca <b>+</b> para importar un PDF o una imagen, o crear una nota.</p>
     </div>
@@ -37,7 +38,7 @@
     <aside id="drawer" hidden>
       <div class="scrim"></div>
       <nav>
-        <div class="brand">Editor PDF</div>
+        <div class="brand"><img src="./icon-192.png" alt="" /><span>PenFich</span></div>
         <button data-v="all" data-i="note">Todos los apuntes</button>
         <button data-v="fav" data-i="star">Favoritos</button>
         <hr />
@@ -114,7 +115,7 @@
   <section id="settings" hidden>
     <header class="bar">
       <button id="sBack" class="btn ico" data-i="back"></button>
-      <h1 id="sTitle">Ajustes de Editor PDF</h1>
+      <h1 id="sTitle">Ajustes de PenFich</h1>
     </header>
     <div id="sBody"></div>
   </section>

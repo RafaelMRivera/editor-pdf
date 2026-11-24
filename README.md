@@ -1,4 +1,4 @@
-# Editor PDF
+# PenFich
 
 Notas, PDF e imágenes (JPG/PNG) como PWA: biblioteca de apuntes, plantillas, lápiz con presión, resaltador, borrador, lazo,
 formas, texto, firma, imágenes, exportar a PDF/imagen y copia de seguridad. Pensada para tablet con lápiz (Lenovo Tab + Lenovo Pen).

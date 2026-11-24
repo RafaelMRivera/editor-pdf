@@ -119,7 +119,7 @@ export async function installApp() {
     <div class="help">
       <p><b>Android (Chrome):</b> toca los <b>tres puntos ⋮</b> arriba a la derecha → <b>«Instalar aplicación»</b> (o «Añadir a pantalla de inicio»).</p>
       <p><b>iPhone / iPad (Safari):</b> toca el botón <b>Compartir</b> (cuadro con flecha) → <b>«Añadir a pantalla de inicio»</b> → Añadir.</p>
-      <p><b>PC (Chrome / Edge):</b> icono de instalar en la barra de direcciones, o ⋮ → <b>Instalar Editor PDF</b>.</p>
+      <p><b>PC (Chrome / Edge):</b> icono de instalar en la barra de direcciones, o ⋮ → <b>Instalar PenFich</b>.</p>
       <p class="hint">${ios ? 'Estás en iOS: en iOS solo funciona desde Safari.' : 'La app debe abrirse desde una dirección https:// para poder instalarse.'}</p>
     </div>`);
 }

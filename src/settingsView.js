@@ -51,7 +51,7 @@ const SECTIONS = {
     ['h', 'Instalación'],
     ['a', 'Instalar aplicación', () => (isStandalone() ? 'Ya está instalada en este dispositivo' : 'Úsala como app a pantalla completa y sin conexión'), installApp],
   ]],
-  acerca: ['Acerca de', [['t', 'Editor PDF — notas, PDF e imágenes. Tus apuntes se guardan solo en este dispositivo; usa «Backup local» para respaldarlos.']]],
+  acerca: ['Acerca de', [['t', 'PenFich — notas, PDF e imágenes. Tus apuntes se guardan solo en este dispositivo; usa «Backup local» para respaldarlos.']]],
 };
 let cur = null;
 const narrow = () => matchMedia('(max-width:700px)').matches;
@@ -130,7 +130,7 @@ function sync() {
   renderRight();
   const body = $('#sBody');
   body.classList.toggle('show-right', !!cur && narrow());
-  $('#sTitle').textContent = 'Ajustes de Editor PDF';
+  $('#sTitle').textContent = 'Ajustes de PenFich';
 }
 
 export function renderSettings() {

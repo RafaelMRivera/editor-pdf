@@ -7,7 +7,7 @@ if not exist dist\index.html (
 )
 echo.
 echo ==============================================================
-echo   EDITOR PDF  -  aplicacion web
+echo   PENFICH  -  aplicacion web
 echo ==============================================================
 echo   En este PC:        http://localhost:4173
 echo   En la tablet (misma red Wi-Fi), abre en Chrome:

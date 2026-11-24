@@ -32,7 +32,7 @@ function render() {
   if (invite) {
     const iv = document.createElement('div');
     iv.className = 'invite';
-    iv.innerHTML = '<h3>¡Estás invitado a instalar Editor PDF!</h3><p>Úsala como una app: a pantalla completa, sin conexión y con tus apuntes siempre a mano.</p><div><button class="ig">Ignorar</button><button class="mi">Más información</button></div>';
+    iv.innerHTML = '<h3>¡Estás invitado a instalar PenFich!</h3><p>Úsala como una app: a pantalla completa, sin conexión y con tus apuntes siempre a mano.</p><div><button class="ig">Ignorar</button><button class="mi">Más información</button></div>';
     $('.ig', iv).onclick = () => { try { localStorage.setItem('ep-invite', '1'); } catch {} render(); };
     $('.mi', iv).onclick = installApp;
     grid.append(iv);
@@ -185,12 +185,12 @@ export async function backupExport(ids = null) {
     const f = await db.getFile(d.id);
     out.push({ ...d, file: f ? await blobToDataUrl(new Blob([f])) : null });
   }
-  await deliver(new Blob([JSON.stringify({ app: 'editor-pdf', v: 1, docs: out })], { type: 'application/json' }), ids ? `${all[0]?.name || 'nota'}.json` : `editor-pdf-backup-${new Date().toISOString().slice(0, 10)}.json`);
+  await deliver(new Blob([JSON.stringify({ app: 'penfich', v: 1, docs: out })], { type: 'application/json' }), ids ? `${all[0]?.name || 'nota'}.json` : `penfich-backup-${new Date().toISOString().slice(0, 10)}.json`);
 }
 export async function backupImport(file) {
   try {
     const j = JSON.parse(await file.text());
-    if (j.app !== 'editor-pdf') throw new Error('Archivo no válido');
+    if (j.app !== 'penfich' && j.app !== 'editor-pdf') throw new Error('Archivo no válido');
     for (const d of j.docs) {
       const { file: f, ...doc } = d;
       if (f) await db.putFile(doc.id, await (await fetch(f)).arrayBuffer());

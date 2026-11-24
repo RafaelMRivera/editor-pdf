@@ -258,7 +258,7 @@ function redraw(i) {
   if (E.sel?.i === i && E.sel.items.length) {
     const b = selBox(i);
     ctx.save();
-    ctx.strokeStyle = '#ee7b2d'; ctx.fillStyle = '#ee7b2d'; ctx.lineWidth = 2 * d; ctx.setLineDash([8 * d, 6 * d]);
+    ctx.strokeStyle = '#22C55E'; ctx.fillStyle = '#22C55E'; ctx.lineWidth = 2 * d; ctx.setLineDash([8 * d, 6 * d]);
     ctx.strokeRect(b.x0 * W, b.y0 * W, (b.x1 - b.x0) * W, (b.y1 - b.y0) * W);
     ctx.setLineDash([]);
     ctx.fillRect(b.x1 * W - 7 * d, b.y1 * W - 7 * d, 14 * d, 14 * d);
@@ -266,7 +266,7 @@ function redraw(i) {
   }
   if (E.drag?.poly && E.drag.i === i) {
     ctx.save();
-    ctx.strokeStyle = '#ee7b2d'; ctx.lineWidth = 2 * d; ctx.setLineDash([6 * d, 5 * d]);
+    ctx.strokeStyle = '#22C55E'; ctx.lineWidth = 2 * d; ctx.setLineDash([6 * d, 5 * d]);
     ctx.beginPath();
     E.drag.poly.forEach(([x, y], k) => (k ? ctx.lineTo(x * W, y * W) : ctx.moveTo(x * W, y * W)));
     ctx.stroke();
@@ -882,7 +882,7 @@ function openExport() {
   const multi = E.pages.length > 1;
   const box = document.createElement('div');
   box.className = 'dlg';
-  const fmts = [['pdf', 'PDF'], ['note', 'Nota de Editor PDF'], ['png', 'PNG'], ['jpeg', 'JPEG']];
+  const fmts = [['pdf', 'PDF'], ['note', 'Nota de PenFich'], ['png', 'PNG'], ['jpeg', 'JPEG']];
   box.innerHTML = '<h4>Páginas</h4><div class="opts"><label><input type="radio" name="xs" value="all" checked /> Todo el apunte</label><label><input type="radio" name="xs" value="page" /> Esta página</label></div>' +
     '<h4>Formato del archivo</h4><div class="opts">' + fmts.map(([v, l], i) => '<label><input type="radio" name="xf" value="' + v + '"' + (i === 0 ? ' checked' : '') + ' /> ' + l + '</label>').join('') + '</div>' +
     '<div class="dbtns"><button class="c">Cancelar</button><button class="ok">Compartir</button></div>';
