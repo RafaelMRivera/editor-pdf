@@ -6,3 +6,5 @@ dist
 *.tmp.*
 *.mp4
 *.mov
+supabase/*-listo.sql
+supabase/permisos-listo.sql

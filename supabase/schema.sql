@@ -74,3 +74,9 @@ create policy "admin gestiona correos"   on public.allowed_emails for all using 
 insert into public.allowed_emails (email, role)
 values (lower('TU_CORREO@gmail.com'), 'admin')
 on conflict (email) do update set role = 'admin';
+
+-- 7) Permisos de la API para personas con sesión iniciada (las reglas de arriba deciden qué filas ven).
+--    Los proyectos nuevos de Supabase ya no los otorgan automáticamente. "anon" (sin sesión) no recibe nada.
+grant usage on schema public to authenticated;
+grant select, update on public.profiles       to authenticated;
+grant select, insert, update, delete on public.allowed_emails to authenticated;
