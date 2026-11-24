@@ -599,22 +599,15 @@ $('#fIns').onchange = (e) => { addImage(e.target.files[0]); e.target.value = '';
 $('#fCam').onchange = (e) => { addImage(e.target.files[0]); e.target.value = ''; };
 
 /* ---------- herramientas y panel (como Squid) ---------- */
-const TABS = [['pen', 'Lápiz'], ['lasso', 'Lazo'], ['erase', 'Borrador'], ['shape', 'Formas'], ['text', 'Texto'], ['sig', 'Firma'], ['hand', 'Mano']];
+const TABS = [['pen', 'Lápiz'], ['hl', 'Resaltar'], ['erase', 'Borrador'], ['lasso', 'Lazo'], ['shape', 'Formas'], ['text', 'Texto'], ['sig', 'Firma'], ['hand', 'Mover']];
 const UNIT = { pen: 'mm', hl: 'mm', shape: 'mm', erase: 'mm', text: 'pt', sig: '%' };
 const MM = 25.4 / 72;
 const tabs = $('#popTools');
 TABS.forEach(([id, label]) => {
   const bt = document.createElement('button');
-  bt.dataset.t = id; bt.title = label; bt.innerHTML = svg(id);
-  bt.onclick = () => setTool(id === 'pen' && E.tool === 'hl' ? 'hl' : id);
-  tabs.append(bt);
-});
-const psub = $('#psub');
-[['pen', 'Lápiz'], ['hl', 'Resaltador']].forEach(([id, label]) => {
-  const bt = document.createElement('button');
-  bt.dataset.s = id; bt.title = label; bt.innerHTML = svg(id);
+  bt.dataset.t = id; bt.title = label; bt.innerHTML = svg(id) + '<span class="tl">' + label + '</span>';
   bt.onclick = () => setTool(id);
-  psub.append(bt);
+  tabs.append(bt);
 });
 const pshapes = $('#pshapes');
 SHAPES.forEach(([k, l]) => {
@@ -710,8 +703,7 @@ function syncPop(sliderOnly) {
   dot.style.background = cc.c;
   if (c.s != null) $('#pval').textContent = UNIT[t] === 'mm' ? (c.s * MM).toFixed(1) + ' mm' : c.s + ' ' + UNIT[t];
   if (sliderOnly !== true) {
-    tabs.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x.dataset.t === (t === 'hl' ? 'pen' : t)));
-    psub.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x.dataset.s === t));
+    tabs.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x.dataset.t === t));
     $$('#pop .sect').forEach((x) => (x.hidden = !x.dataset.for.split(' ').includes(t)));
     if (c.max) {
       const r = $('#psize');
