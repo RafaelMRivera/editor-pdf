@@ -221,3 +221,21 @@ svg.fill{fill:currentColor;stroke:none}
 #drawer .brand{display:flex;align-items:center;gap:12px}
 #drawer .brand img{width:44px;height:44px;border-radius:10px;background:#fff}
 #empty img,#emptyLib img{width:84px;height:84px;border-radius:18px;margin-bottom:10px}
+
+/* ---------- bloqueo con patrón ---------- */
+#lockScreen{display:none;position:fixed;inset:0;z-index:100;background:var(--abyss);color:#fff;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:20px;text-align:center}
+html.locked #lockScreen{display:flex}
+#lockScreen img{width:76px;height:76px;border-radius:18px;background:#fff}
+#lockScreen h2{margin:6px 0 0;font-size:22px}
+#lockMsg{margin:0 0 6px;color:#cfe9d8;min-height:22px}
+#lockForgot{margin-top:10px;background:none;border:0;color:#9fd8b3;font-size:13px;text-decoration:underline;padding:8px}
+.pad{width:min(320px,78vw);color:var(--teal);user-select:none;-webkit-user-select:none}
+#lockPad.pad{color:#fff}
+.pad svg{width:100%;height:auto;aspect-ratio:1;display:block;touch-action:none;stroke:none;fill:none}
+.pad .dot{fill:currentColor;opacity:.4}
+.pad .dot.on{fill:var(--bri);opacity:1}
+.pad .trail{fill:none;stroke:var(--bri);stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+.pad.bad .trail{stroke:#ef4444}.pad.bad .dot.on{fill:#ef4444}
+.pad.good .trail{stroke:var(--vib)}
+.padmsg{margin:0 0 6px;text-align:center;color:var(--ink)}
+.padhost{display:flex;justify-content:center}

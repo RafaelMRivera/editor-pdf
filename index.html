@@ -11,6 +11,7 @@
   <link rel="icon" href="./favicon.png" type="image/png" />
   <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
   <title>PenFich</title>
+  <script>try{if(localStorage.getItem('pf-lock'))document.documentElement.classList.add('locked')}catch(e){}</script>
 </head>
 <body>
   <!-- ============ BIBLIOTECA ============ -->
@@ -42,6 +43,7 @@
         <button data-v="all" data-i="note">Todos los apuntes</button>
         <button data-v="fav" data-i="star">Favoritos</button>
         <hr />
+        <button data-v="lock" data-i="lock">Bloqueo con patrón</button>
         <button data-v="settings" data-i="settings">Ajustes</button>
         <button data-v="install" data-i="install">Instalar aplicación</button>
       </nav>
@@ -133,6 +135,14 @@
         <button id="sigOk" class="btn small primary">Usar firma</button>
       </div>
     </div>
+  </div>
+
+  <div id="lockScreen">
+    <img src="./icon-192.png" alt="" />
+    <h2>PenFich</h2>
+    <p id="lockMsg">Dibuja tu patrón para desbloquear</p>
+    <div id="lockPad"></div>
+    <button id="lockForgot">Olvidé mi patrón</button>
   </div>
 
   <input id="fPdf" type="file" accept="application/pdf,.pdf" hidden />

@@ -2,11 +2,12 @@ import { cfg, saveCfg } from './settings.js';
 import { TEMPLATES } from './templates.js';
 import { $, hydrate, installApp, isStandalone, sheet, menuSheet, svg } from './ui.js';
 import { backupExport } from './library.js';
+import { openLockMenu, lockStatus, lock, hasLock } from './lock.js';
 
 const tplOpts = TEMPLATES.map((t) => [t.id, t.n]);
 // Estructura idéntica a Squid: menú a la izquierda, opciones a la derecha
 const NAV = [
-  ['Apuntes', [['editar', 'Editar apuntes'], ['entrada', 'Métodos de entrada'], ['estandar', 'Ajustes estándar de apuntes'], ['backup', 'Backup y restaurar'], ['cast', 'Transmitir y proyectar']]],
+  ['Apuntes', [['editar', 'Editar apuntes'], ['entrada', 'Métodos de entrada'], ['estandar', 'Ajustes estándar de apuntes'], ['seguridad', 'Seguridad'], ['backup', 'Backup y restaurar'], ['cast', 'Transmitir y proyectar']]],
   ['General', [['ayuda', 'Ayuda y soporte técnico'], ['acerca', 'Acerca de']]],
 ];
 const SECTIONS = {
@@ -33,6 +34,11 @@ const SECTIONS = {
     ['b', 'remember', 'Guardar tu posición en la página', 'Restaurar el desplazamiento anterior en cada página'],
     ['h', 'Tamaño de la página'],
     ['c', 'zoom', 'Zoom estándar', [['fit', 'Ajustar a la pantalla'], ['100', '100 %']]],
+  ]],
+  seguridad: ['Seguridad', [
+    ['h', 'Bloqueo con patrón'],
+    ['a', 'Bloqueo con patrón', () => lockStatus(), openLockMenu],
+    ['t', 'Pide un patrón al abrir la app y al volver a encender la pantalla, para que nadie más vea tus apuntes. Se guarda cifrado, solo en este dispositivo.'],
   ]],
   backup: ['Backup y restaurar', [
     ['a', 'Backup local', 'Crear y restaurar backups en tu dispositivo', () =>

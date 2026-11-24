@@ -15,6 +15,7 @@ const DEF = {
   penButton: 'lasso', // lasso | erase | none (botón lateral del lápiz)
   cast: true, // habilitar presentación a pantalla completa
   autoPresent: false,
+  lockDelay: 0, // segundos antes de pedir el patrón al volver a la app (0 = siempre)
 };
 let saved = {};
 try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch {}

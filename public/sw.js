@@ -1,6 +1,6 @@
 // Modo sin conexión. La página (HTML) se pide primero a internet para que siempre cargue la versión nueva;
 // si no hay conexión, se usa la copia guardada. Los archivos con hash (assets/) no cambian, van desde caché.
-const C = 'penfich-v4';
+const C = 'penfich-v5';
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (e) =>
   e.waitUntil(

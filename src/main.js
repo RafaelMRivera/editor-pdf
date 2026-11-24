@@ -7,8 +7,10 @@ import { $, hydrate } from './ui.js';
 import { initLibrary, refresh } from './library.js';
 import { openDoc, closeDoc, isOpen } from './editor.js';
 import { renderSettings, settingsBack } from './settingsView.js';
+import { initLock } from './lock.js';
 
 hydrate();
+initLock();
 initLibrary();
 $('#sBack').onclick = () => { if (!settingsBack()) history.length > 1 ? history.back() : (location.hash = '#/'); };
 
