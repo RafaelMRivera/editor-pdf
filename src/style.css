@@ -155,3 +155,35 @@ body.t-hand #viewer{cursor:grab}
 body.viewonly #eUndo,body.viewonly #eRedo,body.viewonly #eColor,body.viewonly #eTool,body.viewonly #eImg,body.viewonly #selBar{display:none!important}
 body.present #editor .bar,body.present #selBar{display:none!important}
 #pExit{position:fixed;top:calc(10px + env(safe-area-inset-top));right:10px;z-index:12;background:#000a;color:#fff;border:0;border-radius:20px;padding:8px 14px;font-size:13px}
+
+/* ---------- barra y paneles del editor (como Squid) ---------- */
+.pager span{min-width:30px;text-align:center}
+#pval{min-width:58px;text-align:right}
+.subs{display:flex;gap:6px;border-top:1px solid var(--line);padding-top:6px}
+.subs button{background:none;border:0;border-bottom:3px solid transparent;padding:8px 14px;color:var(--muted)}
+.subs button.on{border-bottom-color:var(--orange);color:var(--ink)}
+.q{display:inline-flex;width:18px;height:18px;border:1.5px solid var(--muted);border-radius:50%;font-size:11px;align-items:center;justify-content:center;color:var(--muted)}
+#cpop{position:fixed;top:calc(58px + env(safe-area-inset-top));right:8px;width:min(330px,calc(100vw - 16px));background:#f5f5f5;border-radius:4px;box-shadow:0 4px 18px #0005;z-index:9;max-height:calc(100vh - 80px);overflow-y:auto}
+#cpop .tabs button{padding:12px 4px}
+#cGrid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding:14px 14px 4px}
+#cQuick,#cRecent{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding:8px 14px}
+.cs{width:100%;aspect-ratio:1;border-radius:50%;border:1px solid #0002;padding:0;display:flex;align-items:center;justify-content:center;color:#fff}
+.cs.light{color:#111}
+.cs svg{width:24px;height:24px;stroke-width:3}
+.brow{display:flex;align-items:center;gap:10px;padding:10px 16px;color:#555}
+.brow input{flex:1}
+.lbl{padding:6px 16px 0;font-size:12px;color:var(--muted)}
+#cSl{padding:10px 16px 16px}
+.srow2{display:flex;align-items:center;gap:10px;margin:10px 0;font-size:13px;color:var(--muted)}
+.srow2 span{width:92px}
+.srow2 input[type=range]{flex:1}
+#cPrev{width:34px;height:34px;border-radius:50%;border:1px solid #0003;display:block}
+#cHex{flex:1;font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:6px}
+.dropwrap{position:fixed;inset:0;z-index:50}
+.drop{position:fixed;top:calc(8px + env(safe-area-inset-top));right:8px;min-width:240px;max-width:calc(100vw - 16px);background:#fff;border-radius:4px;box-shadow:0 4px 18px #0006;padding:6px 0}
+.ditem{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;padding:14px 20px;text-align:left;font-size:15px}
+.ditem:active{background:var(--teal-l)}
+.ditem .arr{margin-left:auto;font-style:normal;font-size:20px;color:var(--muted)}
+.ditem.danger{color:var(--danger)}
+.ditem.on span::after{content:' ✓';color:var(--orange)}
+.ditem.back{border-bottom:1px solid #eee;color:var(--muted)}

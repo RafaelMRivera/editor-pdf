@@ -135,7 +135,9 @@ function sync() {
 
 export function renderSettings() {
   $('#sBody').innerHTML = '<div id="sLeft"></div><div id="sRight"></div>';
-  cur = narrow() ? null : 'editar';
+  let want = null;
+  try { want = sessionStorage.getItem('ep-sec'); sessionStorage.removeItem('ep-sec'); } catch {}
+  cur = want && SECTIONS[want] ? want : narrow() ? null : 'editar';
   sync();
   hydrate($('#settings'));
 }

@@ -53,16 +53,15 @@
       <button id="eBack" class="btn ico" data-i="back" title="Volver"></button>
       <input id="eTitle" spellcheck="false" />
       <span class="sp"></span>
-      <button id="eMode" class="btn ico" title="Sólo mirar / Editar"></button>
       <button id="eUndo" class="btn ico" data-i="undo" title="Deshacer" disabled></button>
       <button id="eRedo" class="btn ico" data-i="redo" title="Rehacer" disabled></button>
-      <button id="eColor" class="btn ico" title="Color"><i class="dot"></i></button>
       <button id="eTool" class="btn ico" title="Herramientas"></button>
+      <button id="eColor" class="btn ico" title="Color"><i class="dot"></i></button>
       <button id="eImg" class="btn ico" data-i="img" title="Insertar imagen"></button>
-      <span class="pager hide-s">
-        <button id="ePrev" class="btn ico" data-i="prev"></button>
+      <span class="pager">
+        <button id="ePrev" class="btn ico" data-i="prev" title="Página anterior"></button>
         <span id="ePage">1</span>
-        <button id="eNext" class="btn ico" data-i="next"></button>
+        <button id="eNext" class="btn ico" title="Página siguiente"></button>
       </span>
       <button id="eMenu" class="btn ico" data-i="more" title="Más"></button>
     </header>
@@ -81,11 +80,9 @@
     <div id="pop" hidden>
       <div id="popTools" class="tabs"></div>
       <div class="sect" data-for="pen hl shape"><canvas id="prev" width="320" height="70"></canvas></div>
-      <div class="sect" data-for="pen hl shape erase text sig">
-        <div class="row"><span id="sizeLabel">Grosor</span><input id="psize" type="range" /><span id="pval"></span></div>
-      </div>
-      <div class="sect" data-for="pen hl shape text"><div id="pcolors"></div></div>
-      <div class="sect" data-for="pen"><label class="chk"><input id="ppress" type="checkbox" /> Sensibilidad a la presión</label></div>
+      <div class="sect" data-for="pen hl shape erase text sig"><div class="row"><input id="psize" type="range" /><span id="pval"></span></div></div>
+      <div class="sect" data-for="pen"><label class="chk"><input id="ppress" type="checkbox" /> Presión <span class="q" title="El grosor del trazo cambia según cuánto aprietas el lápiz">?</span></label></div>
+      <div class="sect" data-for="pen hl"><div id="psub" class="subs"></div></div>
       <div class="sect" data-for="erase">
         <label class="chk"><input type="radio" name="emode" value="full" /> Borrar trazo completo</label>
         <label class="chk"><input type="radio" name="emode" value="part" /> Borrar solo lo que toco</label>
@@ -93,7 +90,24 @@
       <div class="sect" data-for="shape"><div id="pshapes" class="seg"></div></div>
       <div class="sect" data-for="sig"><button id="psig" class="btn small">Cambiar firma</button></div>
       <div class="sect" data-for="lasso"><p class="hint">Dibuja un círculo alrededor de lo que quieras mover, copiar o borrar. Arrastra la esquina para cambiar el tamaño.</p></div>
-      <div class="sect" data-for="hand"><p class="hint">Con la mano arrastras la página. También: dos dedos para acercar/alejar.</p></div>
+      <div class="sect" data-for="hand"><p class="hint">Con la mano arrastras la página. También: dos dedos para acercar o alejar.</p></div>
+    </div>
+
+    <div id="cpop" hidden>
+      <div class="tabs"><button id="ctPal" class="on" data-i="palette"></button><button id="ctSl" data-i="sliders"></button></div>
+      <div id="cPal">
+        <div id="cGrid"></div>
+        <div class="brow"><span data-i="sun"></span><input id="cBright" type="range" min="0" max="100" /><span data-i="moon"></span></div>
+        <div id="cQuick"></div>
+        <div class="lbl">Reciente</div>
+        <div id="cRecent"></div>
+      </div>
+      <div id="cSl" hidden>
+        <div class="srow2"><span>Tono</span><input id="cH" type="range" min="0" max="360" /></div>
+        <div class="srow2"><span>Saturación</span><input id="cS" type="range" min="0" max="100" /></div>
+        <div class="srow2"><span>Luminosidad</span><input id="cL" type="range" min="0" max="100" /></div>
+        <div class="srow2"><i id="cPrev"></i><input id="cHex" maxlength="7" spellcheck="false" /></div>
+      </div>
     </div>
   </section>
 
